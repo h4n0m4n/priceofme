@@ -8,11 +8,13 @@ const fmtD = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2
 
 export default function Home() {
   const [country, setCountry] = useState("US");
-  const [age, setAge] = useState(28);
+  const [ageStr, setAgeStr] = useState("28");
   const [usage, setUsage] = useState("moderate");
   const [selected, setSelected] = useState<string[]>(PLATFORMS.map(p => p.id));
   const [done, setDone] = useState(false);
 
+  const parsedAge = parseInt(ageStr);
+  const age = isNaN(parsedAge) ? 28 : parsedAge;
   const clampedAge = Math.max(13, Math.min(100, age));
   const ageGroup = ageGroupFromAge(clampedAge);
 
@@ -52,8 +54,8 @@ export default function Home() {
           </div>
           <div>
             <label style={lbl}>Age</label>
-            <input type="number" value={age} min={13} max={100} onChange={e => { setAge(parseInt(e.target.value) || 28); setDone(false); }} style={inp} />
-            <div style={{ fontSize: 9, color: "#484f58", marginTop: 3 }}>Ad demographic: {ageGroup}</div>
+            <input type="number" value={ageStr} min={13} max={100} onChange={e => { setAgeStr(e.target.value); setDone(false); }} onBlur={() => { if (age < 13) setAgeStr("13"); else if (age > 100) setAgeStr("100"); }} style={inp} />
+            <div style={{ fontSize: 10, color: "#6e7681", marginTop: 3 }}>Ad demographic: {ageGroup}{clampedAge !== age ? ` (clamped to ${clampedAge})` : ""}</div>
           </div>
           <div>
             <label style={lbl}>Daily Usage</label>
@@ -82,18 +84,18 @@ export default function Home() {
           })}
         </div>
 
-        <button type="button" onClick={() => setDone(true)} style={{
+        <button type="button" onClick={() => { if (selected.length === 0) return; setDone(true); setTimeout(() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }), 50); }} disabled={selected.length === 0} style={{
           width: "100%", padding: "14px 0", borderRadius: 8, fontWeight: 900, fontSize: 14,
-          background: "linear-gradient(135deg, #ff4444, #ff6600)", color: "#fff",
-          border: "none", cursor: "pointer", outline: "none", letterSpacing: 1,
+          background: selected.length > 0 ? "linear-gradient(135deg, #ff4444, #ff6600)" : "#21262d", color: selected.length > 0 ? "#fff" : "#555",
+          border: "none", cursor: selected.length > 0 ? "pointer" : "not-allowed", outline: "none", letterSpacing: 1, transition: "all 0.2s",
         }}>
-          CALCULATE MY DATA PRICE TAG
+          {selected.length > 0 ? "CALCULATE MY DATA PRICE TAG" : "SELECT AT LEAST ONE PLATFORM"}
         </button>
       </div>
 
       {/* RESULTS */}
       {result && (
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 20px 60px" }}>
+        <div id="results" style={{ maxWidth: 800, margin: "0 auto", padding: "0 20px 60px" }}>
 
           {/* BIG NUMBER */}
           <div style={{ textAlign: "center", padding: "40px 0 20px", borderTop: "1px solid #21262d" }}>
@@ -116,7 +118,7 @@ export default function Home() {
               ${fmt(result.lifetimeTotal)}
             </div>
             <div style={{ fontSize: 14, color: "#888", marginTop: 4 }}>
-              over your remaining ~{Math.round(result.yearsLeft)} years
+              over your remaining ~{Math.round(result.yearsLeft)} {Math.round(result.yearsLeft) === 1 ? "year" : "years"}
             </div>
             <div style={{ fontSize: 13, color: "#555", marginTop: 8 }}>
               That&apos;s equivalent to <strong style={{ color: "#e6edf3" }}>{getEquivalent(result.lifetimeTotal)}</strong>
@@ -192,7 +194,7 @@ export default function Home() {
       {/* FOOTER */}
       <div style={{ textAlign: "center", padding: "20px 20px 12px", borderTop: "1px solid #21262d", fontSize: 11, color: "#484f58", maxWidth: 700, margin: "0 auto" }}>
         <em>Your data has a price tag. You just never see it.</em>
-        <div style={{ fontSize: 9, marginTop: 8, lineHeight: 1.6, color: "#3d424a" }}>
+        <div style={{ fontSize: 11, marginTop: 8, lineHeight: 1.6, color: "#6e7681" }}>
           <strong>Disclaimer:</strong> All figures are estimates derived from publicly available SEC 10-K filings, earnings reports,
           and industry research (Statista, Proton Privacy Report 2025). Actual per-user revenue varies based on individual behavior,
           ad targeting, and platform algorithms. This tool is for educational and awareness purposes only.
@@ -226,12 +228,17 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
   );
 }
 
+function plural(n: number, singular: string, pluralForm: string): string {
+  return n === 1 ? `1 ${singular}` : `${n} ${pluralForm}`;
+}
+
 function getEquivalent(total: number): string {
-  if (total >= 250000) return `${Math.round(total / 250000)} median US houses`;
-  if (total >= 67000) return `a house down payment`;
-  if (total >= 35000) return `a year of college tuition`;
-  if (total >= 5000) return `${Math.round(total / 5000)} used car down payments`;
-  if (total >= 1200) return `${Math.round(total / 1200)} months of rent`;
-  if (total >= 350) return `${Math.round(total / 350)} budget smartphones`;
-  return `${Math.round(total / 5.5)} Big Macs`;
+  if (total <= 0) return "nothing (yet)";
+  if (total >= 250000) return plural(Math.round(total / 250000), "median US house", "median US houses");
+  if (total >= 67000) return "a house down payment";
+  if (total >= 35000) return "a year of college tuition";
+  if (total >= 5000) return plural(Math.round(total / 5000), "used car down payment", "used car down payments");
+  if (total >= 1200) return plural(Math.round(total / 1200), "month of rent", "months of rent");
+  if (total >= 350) return plural(Math.round(total / 350), "budget smartphone", "budget smartphones");
+  return plural(Math.round(total / 5.5), "Big Mac", "Big Macs");
 }
