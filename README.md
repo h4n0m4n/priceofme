@@ -63,7 +63,7 @@ Every number comes from public SEC filings, earnings reports, and industry resea
 ## Quick Start
 
 ```bash
-git clone https://github.com/aykutturksoy5-maker/priceofme.git
+git clone https://github.com/h4n0m4n/priceofme.git
 cd priceofme/web && npm install && npm run dev
 # Open http://localhost:3000
 ```

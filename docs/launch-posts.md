@@ -25,7 +25,7 @@ Lifetime? If you're 28, tech companies will make ~$57,000 from your data. That's
 It adjusts for your country, age, usage level, and which platforms you use.
 
 Live demo: https://priceofme.vercel.app
-GitHub: https://github.com/aykutturksoy5-maker/priceofme
+GitHub: https://github.com/h4n0m4n/priceofme
 
 All numbers from SEC 10-K filings. MIT license. Python + Next.js.
 ```
@@ -40,7 +40,7 @@ I built an open-source tool that calculates exactly how much Google, Meta, and T
 ```
 **Link URL:**
 ```
-https://github.com/aykutturksoy5-maker/priceofme
+https://github.com/h4n0m4n/priceofme
 ```
 
 ---
@@ -53,7 +53,7 @@ PriceOfMe — How much does the internet make from YOU? Personal data value calc
 ```
 **Link URL:**
 ```
-https://github.com/aykutturksoy5-maker/priceofme
+https://github.com/h4n0m4n/priceofme
 ```
 
 ---
@@ -78,7 +78,7 @@ Features:
 - Lifetime value projection using WHO life expectancy
 
 Live demo: https://priceofme.vercel.app
-GitHub: https://github.com/aykutturksoy5-maker/priceofme
+GitHub: https://github.com/h4n0m4n/priceofme
 ```
 
 ---
@@ -91,5 +91,5 @@ The average US internet user generates $1,200+/year in advertising revenue for t
 ```
 **Link URL:**
 ```
-https://github.com/aykutturksoy5-maker/priceofme
+https://github.com/h4n0m4n/priceofme
 ```

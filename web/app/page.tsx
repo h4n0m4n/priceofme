@@ -181,7 +181,7 @@ export default function Home() {
           {/* CTA */}
           <div style={{ textAlign: "center", padding: "20px 0 40px" }}>
             <div style={{ fontSize: 12, color: "#888", marginBottom: 12 }}>Built with real SEC filing data. 100% open source.</div>
-            <a href="https://github.com/aykutturksoy5-maker/priceofme" target="_blank" rel="noopener noreferrer" style={{
+            <a href="https://github.com/h4n0m4n/priceofme" target="_blank" rel="noopener noreferrer" style={{
               display: "inline-block", padding: "12px 28px", borderRadius: 8, fontWeight: 700, fontSize: 13,
               background: "#161b22", color: "#e6edf3", border: "1px solid #21262d", textDecoration: "none",
             }}>
