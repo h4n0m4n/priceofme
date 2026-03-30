@@ -64,6 +64,28 @@ const AGE_MULT: Record<string, number> = {
   "13-17": 0.65, "18-24": 1.20, "25-34": 1.35, "35-44": 1.25, "45-54": 1.10, "55-64": 0.90, "65+": 0.70,
 };
 const USAGE_MULT: Record<string, number> = { light: 0.6, moderate: 1.0, heavy: 1.5, extreme: 2.0 };
+const USAGE_HOURS: Record<string, number> = { light: 1, moderate: 3, heavy: 6.5, extreme: 10 };
+
+const LIFE_EXPECTANCY: Record<string, number> = {
+  US: 78.5, CA: 82.3, GB: 81.0, DE: 81.2, FR: 82.5, IT: 83.5, ES: 83.6,
+  NL: 82.3, SE: 83.0, NO: 83.2, PL: 78.0, CH: 83.8, AT: 82.0, BE: 81.5,
+  PT: 81.9, IE: 82.0, DK: 81.4, FI: 82.0, GR: 81.6, CZ: 79.5, RO: 76.0,
+  HU: 76.7, UA: 73.6, RU: 73.2, JP: 84.6, KR: 83.7, CN: 78.2, IN: 70.4,
+  AU: 83.4, NZ: 82.5, ID: 71.9, TH: 78.7, VN: 75.4, PH: 71.2, MY: 76.2,
+  SG: 83.6, TW: 81.0, HK: 85.3, BR: 75.9, MX: 75.1, AR: 76.5, CO: 77.3,
+  CL: 80.7, PE: 76.5, NG: 54.7, ZA: 64.1, EG: 72.0, KE: 61.6, SA: 77.6,
+  AE: 78.7, IL: 83.0, PK: 67.3, TR: 78.6,
+};
+
+export function ageGroupFromAge(age: number): string {
+  if (age < 18) return "13-17";
+  if (age < 25) return "18-24";
+  if (age < 35) return "25-34";
+  if (age < 45) return "35-44";
+  if (age < 55) return "45-54";
+  if (age < 65) return "55-64";
+  return "65+";
+}
 
 export interface CalcResult {
   platforms: { id: string; name: string; icon: string; color: string; annual: number; daily: number; source: string }[];
@@ -98,9 +120,11 @@ export function calculate(
 
   const annualTotal = Math.round(platforms.reduce((s, p) => s + p.annual, 0) * 100) / 100;
   const dailyTotal = Math.round((annualTotal / 365) * 100) / 100;
-  const yearsLeft = Math.max(1, 73.4 - age);
+  const lifeExp = LIFE_EXPECTANCY[country] || 73.4;
+  const yearsLeft = Math.max(1, lifeExp - Math.max(13, Math.min(100, age)));
   const lifetimeTotal = Math.round(annualTotal * yearsLeft * 100) / 100;
-  const perHour = Math.round((dailyTotal / 8) * 100) / 100;
+  const dailyHours = USAGE_HOURS[usage] || 3;
+  const perHour = dailyHours > 0 ? Math.round((dailyTotal / dailyHours) * 100) / 100 : 0;
   const globalFairShare = Math.round((740e9 / 5.35e9) * 100) / 100;
 
   const coffeeDays = dailyTotal > 0 ? Math.max(1, Math.round(5.0 / dailyTotal)) : 999;

@@ -1,22 +1,24 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { PLATFORMS, COUNTRIES, calculate, type CalcResult } from "./engine";
+import { PLATFORMS, COUNTRIES, calculate, ageGroupFromAge, type CalcResult } from "./engine";
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 const fmtD = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function Home() {
   const [country, setCountry] = useState("US");
-  const [ageGroup, setAgeGroup] = useState("25-34");
   const [age, setAge] = useState(28);
   const [usage, setUsage] = useState("moderate");
   const [selected, setSelected] = useState<string[]>(PLATFORMS.map(p => p.id));
   const [done, setDone] = useState(false);
 
+  const clampedAge = Math.max(13, Math.min(100, age));
+  const ageGroup = ageGroupFromAge(clampedAge);
+
   const result: CalcResult | null = useMemo(
-    () => (done ? calculate(country, ageGroup, usage, selected, age) : null),
-    [done, country, ageGroup, usage, selected, age],
+    () => (done ? calculate(country, ageGroup, usage, selected, clampedAge) : null),
+    [done, country, ageGroup, usage, selected, clampedAge],
   );
 
   function toggle(id: string) {
@@ -51,12 +53,7 @@ export default function Home() {
           <div>
             <label style={lbl}>Age</label>
             <input type="number" value={age} min={13} max={100} onChange={e => { setAge(parseInt(e.target.value) || 28); setDone(false); }} style={inp} />
-          </div>
-          <div>
-            <label style={lbl}>Age Group</label>
-            <select value={ageGroup} onChange={e => { setAgeGroup(e.target.value); setDone(false); }} style={inp}>
-              {["13-17", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"].map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
+            <div style={{ fontSize: 9, color: "#484f58", marginTop: 3 }}>Ad demographic: {ageGroup}</div>
           </div>
           <div>
             <label style={lbl}>Daily Usage</label>
@@ -100,7 +97,7 @@ export default function Home() {
 
           {/* BIG NUMBER */}
           <div style={{ textAlign: "center", padding: "40px 0 20px", borderTop: "1px solid #21262d" }}>
-            <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: 2, color: "#888", marginBottom: 8 }}>THE INTERNET MAKES FROM YOU</div>
+            <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: 2, color: "#888", marginBottom: 8 }}>ESTIMATED ANNUAL DATA VALUE</div>
             <div style={{ fontSize: "clamp(48px, 10vw, 80px)", fontWeight: 900, lineHeight: 1, background: "linear-gradient(135deg, #ff4444, #ff8800)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               ${fmt(result.annualTotal)}
             </div>
@@ -114,7 +111,7 @@ export default function Home() {
 
           {/* LIFETIME */}
           <div style={{ textAlign: "center", padding: "30px 0", borderTop: "1px solid #21262d" }}>
-            <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: 2, color: "#888", marginBottom: 8 }}>YOUR LIFETIME DATA VALUE</div>
+            <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: 2, color: "#888", marginBottom: 8 }}>ESTIMATED LIFETIME DATA VALUE</div>
             <div style={{ fontSize: "clamp(36px, 7vw, 60px)", fontWeight: 900, color: "#ff8800" }}>
               ${fmt(result.lifetimeTotal)}
             </div>
@@ -130,7 +127,7 @@ export default function Home() {
           <div style={{ padding: "20px 0", borderTop: "1px solid #21262d" }}>
             <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: 2, color: "#888", marginBottom: 14 }}>PLATFORM BREAKDOWN</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {result.platforms.map((p, i) => {
+              {result.platforms.map((p) => {
                 const pct = result.annualTotal > 0 ? (p.annual / result.annualTotal) * 100 : 0;
                 return (
                   <div key={p.id} style={{
@@ -193,12 +190,15 @@ export default function Home() {
       )}
 
       {/* FOOTER */}
-      <div style={{ textAlign: "center", padding: "20px", borderTop: "1px solid #21262d", fontSize: 11, color: "#484f58" }}>
+      <div style={{ textAlign: "center", padding: "20px 20px 12px", borderTop: "1px solid #21262d", fontSize: 11, color: "#484f58", maxWidth: 700, margin: "0 auto" }}>
         <em>Your data has a price tag. You just never see it.</em>
-        <br />
-        <span style={{ fontSize: 10, marginTop: 4, display: "inline-block" }}>
-          Data from SEC filings, Statista, Proton Privacy Report 2025. Not financial advice. MIT License.
-        </span>
+        <div style={{ fontSize: 9, marginTop: 8, lineHeight: 1.6, color: "#3d424a" }}>
+          <strong>Disclaimer:</strong> All figures are estimates derived from publicly available SEC 10-K filings, earnings reports,
+          and industry research (Statista, Proton Privacy Report 2025). Actual per-user revenue varies based on individual behavior,
+          ad targeting, and platform algorithms. This tool is for educational and awareness purposes only.
+          Company names are used under nominative fair use for factual reporting. Not financial or legal advice.
+          MIT License. No user data is collected.
+        </div>
       </div>
     </div>
   );
