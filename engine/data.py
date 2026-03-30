@@ -158,6 +158,13 @@ HOURS_MULTIPLIERS: dict[str, float] = {
     "extreme": 2.0,
 }
 
+USAGE_HOURS: dict[str, float] = {
+    "light": 1.0,
+    "moderate": 3.0,
+    "heavy": 6.5,
+    "extreme": 10.0,
+}
+
 LIFE_EXPECTANCY_GLOBAL = 73.4
 
 COMPARABLE_ITEMS_USD: list[tuple[float, str]] = [

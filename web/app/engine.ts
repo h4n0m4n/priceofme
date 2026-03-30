@@ -124,7 +124,7 @@ export function calculate(
   const platforms = PLATFORMS
     .filter(p => selectedPlatforms.includes(p.id))
     .map(p => {
-      const base = (p as unknown as Record<string, number>)[region] || p.rest_of_world;
+      const base = p[region as keyof Pick<PlatformDef, "us_canada" | "europe" | "asia_pacific" | "rest_of_world">] ?? p.rest_of_world;
       const annual = Math.round(base * aMult * uMult * 100) / 100;
       return { id: p.id, name: p.name, icon: p.icon, color: p.color, annual, daily: Math.round((annual / 365) * 100) / 100, source: p.source };
     })

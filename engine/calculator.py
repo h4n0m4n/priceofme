@@ -2,7 +2,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 from .data import (
     PLATFORMS, REGION_MAP, AGE_MULTIPLIERS, GENDER_MULTIPLIERS,
-    HOURS_MULTIPLIERS, LIFE_EXPECTANCY_GLOBAL, COMPARABLE_ITEMS_USD,
+    HOURS_MULTIPLIERS, USAGE_HOURS, LIFE_EXPECTANCY_GLOBAL, COMPARABLE_ITEMS_USD,
 )
 
 
@@ -76,7 +76,8 @@ def calculate(profile: UserProfile) -> DataValueResult:
     years_left = max(1, LIFE_EXPECTANCY_GLOBAL - profile.age)
     lifetime_total = round(annual_total * years_left, 2)
 
-    per_hour = round(daily_total / 8, 2) if daily_total > 0 else 0
+    daily_hours = USAGE_HOURS.get(profile.usage_level, 3.0)
+    per_hour = round(daily_total / daily_hours, 2) if daily_total > 0 and daily_hours > 0 else 0
     internet_users = 5.35e9
     total_global_ad = 740e9
 

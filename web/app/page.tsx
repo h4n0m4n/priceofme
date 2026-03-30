@@ -34,7 +34,7 @@ export default function Home() {
       <div style={{ textAlign: "center", padding: "60px 20px 30px" }}>
         <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: 3, color: "#ff4444", marginBottom: 12 }}>OPEN SOURCE DATA VALUE ENGINE</div>
         <h1 style={{ fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 900, lineHeight: 1.1, letterSpacing: -1.5, marginBottom: 16 }}>
-          How much does the internet<br />
+          How much does the internet{" "}
           <span style={{ background: "linear-gradient(135deg, #ff4444, #ff8800)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>make from YOU?</span>
         </h1>
         <p style={{ fontSize: 16, color: "#8b949e", maxWidth: 560, margin: "0 auto 8px" }}>
